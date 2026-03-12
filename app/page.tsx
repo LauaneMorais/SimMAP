@@ -104,10 +104,10 @@ export default function MapeamentoPage() {
         <main className="container mx-auto space-y-8 px-4 py-8">
           {/* Hero Section */}
           <div className="mb-8 text-center">
-            <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
               Mapeamento de Perfis
             </h1>
-            <p className="mt-2 text-pretty text-muted-foreground">
+            <p className="mt-2 text-xl text-pretty text-muted-foreground">
               Visualize os dados e habilidades dos membros da LAWD
             </p>
           </div>

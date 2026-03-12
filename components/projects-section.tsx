@@ -44,6 +44,7 @@ function extractTechTags(tech: string): string[] {
     "Flutter",
     "C#",
     "PHP",
+    "vanilla",
   ];
 
   const techLower = tech.toLowerCase();
@@ -204,7 +205,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
             config={{
               value: { label: "Membros", color: "#a855f7" },
             }}
-            className="h-[250px] w-full"
+            className="h-[400px] w-full"
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -217,13 +218,13 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                   dataKey="name"
                   type="category"
                   stroke="#94a3b8"
-                  fontSize={11}
+                  fontSize={12}
                   width={110}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1e1b4b",
-                    border: "1px solid #4c1d95",
+                    backgroundColor: "#9c2ee0",
+                    border: "1px solid #2f0a4b",
                     borderRadius: "8px",
                     color: "#fff",
                   }}
