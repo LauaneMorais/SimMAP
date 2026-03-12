@@ -15,3 +15,9 @@ next.user-config.*
 node_modules/
 .next/
 .DS_Store
+
+node_modules
+.next
+.env
+dist
+build
