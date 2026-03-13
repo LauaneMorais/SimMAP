@@ -1,0 +1,1 @@
+- Puxar os dados pelo csv no Notion
