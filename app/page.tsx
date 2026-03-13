@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { MemberSelector } from "@/components/member-selector";
 import { StatsCharts } from "@/components/stats-charts";
 import { ProjectsSection } from "@/components/projects-section";
 import { Spinner } from "@/components/ui/spinner";
-import type { Member, MapeamentoResponse } from "@/lib/types";
-
-const API_URL =
-  "https://api.sheety.co/88600ed0be509b11ffce67b0442a1e12/membrosLawd/mapeamento";
+import { memberApi } from "@/lib/services/member-api";
+import type { Member } from "@/lib/types";
 
 export default function MapeamentoPage() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -18,24 +17,28 @@ export default function MapeamentoPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchMembers() {
+    async function loadMembers() {
       try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error("Falha ao carregar dados");
-        }
-        const data: MapeamentoResponse = await response.json();
-        setMembers(data.mapeamento);
+        const data = await memberApi.list();
+        setMembers(data);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erro desconhecido"
-        );
+        if (axios.isAxiosError(err)) {
+          const apiMessage =
+            typeof err.response?.data?.message === "string"
+              ? err.response.data.message
+              : null;
+
+          setError(apiMessage ?? err.message);
+          return;
+        }
+
+        setError(err instanceof Error ? err.message : "Erro desconhecido");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMembers();
+    loadMembers();
   }, []);
 
   if (loading) {
@@ -91,7 +94,6 @@ export default function MapeamentoPage() {
 
   return (
     <div className="min-h-screen bg-background bg-grid">
-      {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
@@ -102,7 +104,6 @@ export default function MapeamentoPage() {
         <Header />
 
         <main className="container mx-auto space-y-8 px-4 py-8">
-          {/* Hero Section */}
           <div className="mb-8 text-center">
             <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
               Mapeamento de Perfis
@@ -112,14 +113,12 @@ export default function MapeamentoPage() {
             </p>
           </div>
 
-          {/* Member Selector */}
           <MemberSelector
             members={members}
             selectedMember={selectedMember}
             onSelect={setSelectedMember}
           />
 
-          {/* Divider */}
           <div className="flex items-center gap-4 py-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -128,10 +127,8 @@ export default function MapeamentoPage() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
           </div>
 
-          {/* Stats Charts */}
           <StatsCharts members={members} />
 
-          {/* Divider */}
           <div className="flex items-center gap-4 py-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
             <span className="rounded-full bg-primary/10 px-4 py-1 text-xs font-medium uppercase tracking-wider text-primary">
@@ -140,10 +137,8 @@ export default function MapeamentoPage() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           </div>
 
-          {/* Projects Section */}
           <ProjectsSection members={members} />
 
-          {/* Footer */}
           <footer className="mt-12 border-t border-border/40 py-6 text-center">
             <p className="text-sm text-muted-foreground">
               Desenvolvido por{" "}

@@ -33,10 +33,12 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
   const courseData = useMemo(() => {
     const counts: Record<string, number> = {};
-    members.forEach((m) => {
-      const course = m.curso;
+
+    members.forEach((member) => {
+      const course = member.curso ?? "Nao informado";
       counts[course] = (counts[course] || 0) + 1;
     });
+
     return Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
@@ -44,23 +46,24 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
   const careerData = useMemo(() => {
     const counts: Record<string, number> = {};
-    members.forEach((m) => {
-      const careers = m.carreira.split(",").map((c) => c.trim());
-      careers.forEach((career) => {
+
+    members.forEach((member) => {
+      member.carreira.forEach((career) => {
         counts[career] = (counts[career] || 0) + 1;
       });
     });
+
     return Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
   }, [members]);
 
- const availabilityData = useMemo(() => {
+  const availabilityData = useMemo(() => {
     const counts: Record<string, number> = {};
-    
-    members.forEach((m) => {
-      const avail = m.disponibilidade;
-      counts[avail] = (counts[avail] || 0) + 1;
+
+    members.forEach((member) => {
+      const availability = member.disponibilidade ?? "Nao informado";
+      counts[availability] = (counts[availability] || 0) + 1;
     });
 
     const getSortWeight = (name: string) => {
@@ -68,7 +71,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
       if (text.includes("menos")) return 1;
       if (text.includes("6 a 8")) return 2;
       if (text.includes("9 a 12") || text.includes("mais")) return 3;
-      return 4; 
+      return 4;
     };
 
     return Object.entries(counts)
@@ -82,19 +85,18 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
   const maturityData = useMemo(() => {
     const counts: Record<string, number> = {};
-    
-    members.forEach((m) => {
-      const matOriginal = m.maturidade.trim(); 
-      
-      let mat = matOriginal.toLowerCase(); 
-      
-      if (mat.includes("desenvolvimento")) {
-        mat = "Em Desenv.";
+
+    members.forEach((member) => {
+      const maturidade = member.maturidade?.trim() ?? "Nao informado";
+
+      let label = maturidade.toLowerCase();
+      if (label.includes("desenvolvimento")) {
+        label = "Em Desenv.";
       } else {
-        mat = matOriginal.split(" ")[0]; 
+        label = maturidade.split(" ")[0];
       }
 
-      counts[mat] = (counts[mat] || 0) + 1;
+      counts[label] = (counts[label] || 0) + 1;
     });
 
     return Object.entries(counts)
@@ -127,10 +129,11 @@ export function StatsCharts({ members }: StatsChartsProps) {
       "Flutter",
     ];
 
-    members.forEach((m) => {
-      const techLower = m.tech.toLowerCase();
+    members.forEach((member) => {
+      const memberTechs = member.techs.map((tech) => tech.toLowerCase());
+
       techKeywords.forEach((tech) => {
-        if (techLower.includes(tech.toLowerCase())) {
+        if (memberTechs.some((item) => item.includes(tech.toLowerCase()))) {
           counts[tech] = (counts[tech] || 0) + 1;
         }
       });
@@ -157,7 +160,6 @@ export function StatsCharts({ members }: StatsChartsProps) {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Tecnologias */}
         <Card className="col-span-full border-primary/20 bg-card/50 backdrop-blur lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-xl">
@@ -210,7 +212,6 @@ export function StatsCharts({ members }: StatsChartsProps) {
           </CardContent>
         </Card>
 
-        {/* Cursos */}
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-xl">
@@ -269,7 +270,6 @@ export function StatsCharts({ members }: StatsChartsProps) {
           </CardContent>
         </Card>
 
-        {/* Carreiras */}
         <Card className="border-primary/20 bg-card/50 backdrop-blur md:col-span-2 lg:col-span-1">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-xl">
@@ -322,7 +322,6 @@ export function StatsCharts({ members }: StatsChartsProps) {
           </CardContent>
         </Card>
 
-        {/* Disponibilidade */}
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-xl">
@@ -381,7 +380,6 @@ export function StatsCharts({ members }: StatsChartsProps) {
           </CardContent>
         </Card>
 
-        {/* Maturidade */}
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-xl">

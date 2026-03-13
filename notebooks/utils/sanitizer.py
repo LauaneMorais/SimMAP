@@ -399,3 +399,10 @@ def tratar_dataframe_notion(df, colunas_para_remover=None, colunas_com_links=Non
                 df[col] = df[col].apply(remove_links)
 
     return df
+
+def replace_nan_with_none(obj):
+    if isinstance(obj, dict):
+        return {key: replace_nan_with_none(value) for key, value in obj.items()}
+    if isinstance(obj, list):
+        return [replace_nan_with_none(value) for value in obj]
+    return None if pd.isna(obj) else obj

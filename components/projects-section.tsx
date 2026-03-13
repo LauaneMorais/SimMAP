@@ -20,37 +20,76 @@ interface ProjectsSectionProps {
   members: Member[];
 }
 
+interface PrioritizedMember extends Member {
+  projetosList: string[];
+}
+
 const COLORS = ["#a855f7", "#c084fc", "#d8b4fe", "#8b5cf6", "#7c3aed", "#6d28d9", "#5b21b6", "#4c1d95"];
 
-function extractTechTags(tech: string): string[] {
-  if (!tech) return [];
+function extractTechTags(techs: string[]): string[] {
+  if (techs.length === 0) return [];
 
   const techAliases: Record<string, string> = {
-    "js": "JavaScript", "javascript": "JavaScript",
-    "ts": "TypeScript", "typescript": "TypeScript",
-    "html": "HTML", "css": "CSS", "sass": "Sass", "vanilla": "Vanilla",
-    "react": "React", "next": "Next.js", "nextjs": "Next.js", "next.js": "Next.js",
-    "vue": "Vue", "vue.js": "Vue", "angular": "Angular", "angular.js": "Angular",
-    "tailwind": "Tailwind", "tailwindcss": "Tailwind",
-    "node": "Node.js", "nodejs": "Node.js", "node.js": "Node.js",
-    "python": "Python", "java": "Java", "c": "C", "c++": "C++", "c#": "C#",
-    "php": "PHP", "golang": "Golang", "rust": "Rust", "kotlin": "Kotlin",
-    "nest": "Nest", "nestjs": "Nest", "express": "Express", "fastapi": "FastAPI",
-    "spring": "Spring", "springboot": "Spring", "django": "Django",
-    "postgresql": "PostgreSQL", "postgres": "PostgreSQL", "sql": "SQL",
-    "prisma": "Prisma", "supabase": "Supabase",
-    "docker": "Docker", "aws": "AWS", 
-    "git": "Git", "github": "GitHub", "gitlab": "GitLab",
-    "flutter": "Flutter", 
-    "figma": "Figma", "photoshop": "Photoshop", "illustrator": "Illustrator", "canva": "Canva",
-    "haskell": "Haskell",
+    js: "JavaScript",
+    javascript: "JavaScript",
+    ts: "TypeScript",
+    typescript: "TypeScript",
+    html: "HTML",
+    css: "CSS",
+    sass: "Sass",
+    vanilla: "Vanilla",
+    react: "React",
+    next: "Next.js",
+    nextjs: "Next.js",
+    "next.js": "Next.js",
+    vue: "Vue",
+    "vue.js": "Vue",
+    angular: "Angular",
+    "angular.js": "Angular",
+    tailwind: "Tailwind",
+    tailwindcss: "Tailwind",
+    node: "Node.js",
+    nodejs: "Node.js",
+    "node.js": "Node.js",
+    python: "Python",
+    java: "Java",
+    c: "C",
+    "c++": "C++",
+    "c#": "C#",
+    php: "PHP",
+    golang: "Golang",
+    rust: "Rust",
+    kotlin: "Kotlin",
+    nest: "Nest",
+    nestjs: "Nest",
+    express: "Express",
+    fastapi: "FastAPI",
+    spring: "Spring",
+    springboot: "Spring",
+    django: "Django",
+    postgresql: "PostgreSQL",
+    postgres: "PostgreSQL",
+    sql: "SQL",
+    prisma: "Prisma",
+    supabase: "Supabase",
+    docker: "Docker",
+    aws: "AWS",
+    git: "Git",
+    github: "GitHub",
+    gitlab: "GitLab",
+    flutter: "Flutter",
+    figma: "Figma",
+    photoshop: "Photoshop",
+    illustrator: "Illustrator",
+    canva: "Canva",
+    haskell: "Haskell",
   };
 
-  const text = tech.toLowerCase();
-  const words = text.replace(/[,;/()]/g, ' ').replace(/\be\b/g, ' ').split(/\s+/);
+  const text = techs.join(" ").toLowerCase();
+  const words = text.replace(/[,;/()]/g, " ").replace(/\be\b/g, " ").split(/\s+/);
   const found = new Set<string>();
 
-  words.forEach(word => {
+  words.forEach((word) => {
     if (techAliases[word]) {
       found.add(techAliases[word]);
     }
@@ -59,12 +98,14 @@ function extractTechTags(tech: string): string[] {
   return Array.from(found).slice(0, 15);
 }
 
-function getMaturidadeBadgeClass(maturidade: string): string {
-  const level = maturidade.split(" ")[0].toLowerCase();
+function getMaturidadeBadgeClass(maturidade?: string | null): string {
+  const level = maturidade?.split(" ")[0].toLowerCase();
+
   switch (level) {
     case "mentor":
       return "bg-green-500/20 text-green-400 border-green-500/30";
     case "autônomo":
+    case "autonomo":
       return "bg-blue-500/20 text-blue-400 border-blue-500/30";
     case "em":
       return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
@@ -75,20 +116,35 @@ function getMaturidadeBadgeClass(maturidade: string): string {
   }
 }
 
-function getMaturidadeLabel(maturidade: string): string {
+function getMaturidadeLabel(maturidade?: string | null): string {
+  if (!maturidade) {
+    return "Nao informado";
+  }
+
   const level = maturidade.split(" ")[0];
   if (maturidade.toLowerCase().includes("em desenvolvimento")) {
     return "Em Desenvolvimento";
   }
+
   return level;
 }
 
 function getPriorityColors(index: number) {
   const colors = [
-    { badge: "bg-red-500/20 text-red-400 border-red-500/30", card: "border-red-500/30 bg-red-500/5 hover:border-red-500/50 hover:bg-red-500/10" },
-    { badge: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", card: "border-yellow-500/30 bg-yellow-500/5 hover:border-yellow-500/50 hover:bg-yellow-500/10" },
-    { badge: "bg-blue-500/20 text-blue-400 border-blue-500/30", card: "border-blue-500/30 bg-blue-500/5 hover:border-blue-500/50 hover:bg-blue-500/10" },
+    {
+      badge: "bg-red-500/20 text-red-400 border-red-500/30",
+      card: "border-red-500/30 bg-red-500/5 hover:border-red-500/50 hover:bg-red-500/10",
+    },
+    {
+      badge: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      card: "border-yellow-500/30 bg-yellow-500/5 hover:border-yellow-500/50 hover:bg-yellow-500/10",
+    },
+    {
+      badge: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      card: "border-blue-500/30 bg-blue-500/5 hover:border-blue-500/50 hover:bg-blue-500/10",
+    },
   ];
+
   return colors[Math.min(index, colors.length - 1)];
 }
 
@@ -97,22 +153,18 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
     const projectMembers: Record<string, Member[]> = {};
 
     members.forEach((member) => {
-      const projects = member.projetosAtuais
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) => p && !p.toLowerCase().includes("nenhum"));
-
-      projects.forEach((project) => {
+      member.projetosAtuais.forEach((project) => {
         if (!projectMembers[project]) {
           projectMembers[project] = [];
         }
+
         projectMembers[project].push(member);
       });
     });
 
     return Object.entries(projectMembers)
       .map(([name, memberList]) => ({
-        name: name.length > 25 ? name.substring(0, 25) + "..." : name,
+        name: name.length > 25 ? `${name.substring(0, 25)}...` : name,
         fullName: name,
         value: memberList.length,
         members: memberList,
@@ -124,12 +176,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
     const projectCounts: Record<string, number> = {};
 
     members.forEach((member) => {
-      const projects = member.projetosFuturos
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) => p);
-
-      projects.forEach((project) => {
+      member.projetosInteresse.forEach((project) => {
         projectCounts[project] = (projectCounts[project] || 0) + 1;
       });
     });
@@ -140,41 +187,31 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
   }, [members]);
 
   const membersWithoutProject = useMemo(() => {
-    return members.filter((m) =>
-      m.projetosAtuais.toLowerCase().includes("nenhum")
-    );
+    return members.filter((member) => member.projetosAtuais.length === 0);
   }, [members]);
 
   const membersWithProject = useMemo(() => {
-    return members.filter(
-      (m) => !m.projetosAtuais.toLowerCase().includes("nenhum")
-    );
+    return members.filter((member) => member.projetosAtuais.length > 0);
   }, [members]);
 
   const interestedInFuture = useMemo(() => {
-    return members.filter((m) => m.projetosFuturos.trim().length > 0).length;
+    return members.filter((member) => member.projetosInteresse.length > 0).length;
   }, [members]);
 
-  // --- NOVA LÓGICA DE PRIORIDADES: 0, 1 e 2+ ---
   const membersByProjectCount = useMemo(() => {
-    return members.reduce((acc, member) => {
-      const projetosRaw = member.projetosAtuais || "";
-      const projetosList = projetosRaw
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) => p.length > 0 && p.toLowerCase() !== "nenhum");
+    return members.reduce<Record<number, PrioritizedMember[]>>((acc, member) => {
+      const projetosList = member.projetosAtuais;
+      const count = Math.min(projetosList.length, 2);
 
-      // A grande sacada: se tiver 0 vai pro grupo 0, se tiver 1 vai pro grupo 1, 
-      // se tiver 2, 3, 4, etc. todos caem no grupo 2!
-      const count = Math.min(projetosList.length, 2); 
+      if (!acc[count]) {
+        acc[count] = [];
+      }
 
-      if (!acc[count]) acc[count] = [];
-      acc[count].push({ ...member, projetosList }); 
+      acc[count].push({ ...member, projetosList });
       return acc;
-    }, {} as Record<number, any[]>);
+    }, {});
   }, [members]);
 
-  // Garante a ordem correta na hora de renderizar na tela
   const sortedCounts = useMemo(() => {
     return Object.keys(membersByProjectCount)
       .map(Number)
@@ -190,7 +227,6 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </h2>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent backdrop-blur">
           <CardContent className="flex items-center gap-4 p-4">
@@ -235,7 +271,6 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </Card>
       </div>
 
-      {/* Project Distribution Chart */}
       <Card className="border-primary/20 bg-card/50 backdrop-blur">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-xl">
@@ -252,71 +287,70 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                  data={projectStats}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 10, bottom: 5 }} 
-                >
-                  <XAxis type="number" stroke="#94a3b8" fontSize={12} />
-                  
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    stroke="#94a3b8"
-                    width={180} 
-                    interval={0} 
-                    tick={(props: any) => {
-                      const { x, y, payload } = props;
-                      
-                      const text = payload.value.length > 50 
-                        ? `${payload.value.substring(0, 22)}...` 
+                data={projectStats}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+              >
+                <XAxis type="number" stroke="#94a3b8" fontSize={12} />
+
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  stroke="#94a3b8"
+                  width={180}
+                  interval={0}
+                  tick={(props: any) => {
+                    const { x, y, payload } = props;
+                    const text =
+                      payload.value.length > 50
+                        ? `${payload.value.substring(0, 22)}...`
                         : payload.value;
 
-                      return (
-                        <text 
-                          x={x - 8} 
-                          y={y} 
-                          dy={4} 
-                          textAnchor="end" 
-                          fill="#94a3b8" 
-                          fontSize={14}
-                        >
-                          {text}
-                        </text>
-                      );
-                    }}
-                  />
-                  
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#9c2ee0",
-                      border: "1px solid #2f0a4b",
-                      borderRadius: "8px",
-                      color: "#fff",
-                    }}
-                    formatter={(value: number, _: string, props: any) => [
-                      `${value} membros`,
-                      props.payload.name, 
-                    ]}
-                  />
-                  
-                  <Bar
-                    dataKey="value"
-                    radius={[0, 4, 4, 0]}
-                    animationDuration={800}
-                    animationEasing="ease-out"
-                  >
-                    {projectStats.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
+                    return (
+                      <text
+                        x={x - 8}
+                        y={y}
+                        dy={4}
+                        textAnchor="end"
+                        fill="#94a3b8"
+                        fontSize={14}
+                      >
+                        {text}
+                      </text>
+                    );
+                  }}
+                />
+
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#9c2ee0",
+                    border: "1px solid #2f0a4b",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  formatter={(value: number, _: string, props: any) => [
+                    `${value} membros`,
+                    props.payload.name,
+                  ]}
+                />
+
+                <Bar
+                  dataKey="value"
+                  radius={[0, 4, 4, 0]}
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                >
+                  {projectStats.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
 
-          {/* Project Members Detail */}
           <div className="mt-6 space-y-4">
             {projectStats.map((project) => (
               <div
@@ -347,7 +381,6 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </CardContent>
       </Card>
 
-      {/* Future Projects Interest */}
       <Card className="border-primary/20 bg-card/50 backdrop-blur">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between text-xl">
@@ -374,7 +407,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                 margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
               >
                 <XAxis type="number" stroke="#94a3b8" fontSize={12} />
-                
+
                 <YAxis
                   dataKey="name"
                   type="category"
@@ -383,18 +416,18 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                   interval={0}
                   tick={(props: any) => {
                     const { x, y, payload } = props;
-                    
-                    const text = payload.value.length > 25 
-                      ? `${payload.value.substring(0, 25)}...` 
-                      : payload.value;
+                    const text =
+                      payload.value.length > 25
+                        ? `${payload.value.substring(0, 25)}...`
+                        : payload.value;
 
                     return (
-                      <text 
-                        x={x - 8} 
-                        y={y} 
-                        dy={4} 
-                        textAnchor="end" 
-                        fill="#94a3b8" 
+                      <text
+                        x={x - 8}
+                        y={y}
+                        dy={4}
+                        textAnchor="end"
+                        fill="#94a3b8"
                         fontSize={14}
                       >
                         {text}
@@ -402,7 +435,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                     );
                   }}
                 />
-                
+
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#9c2ee0",
@@ -415,7 +448,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                     props.payload.name,
                   ]}
                 />
-                
+
                 <Bar
                   dataKey="value"
                   radius={[0, 4, 4, 0]}
@@ -435,7 +468,6 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </CardContent>
       </Card>
 
-      {/* Priority List for Future Projects */}
       <Card className="border-primary/20 bg-card/50 backdrop-blur">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -443,23 +475,26 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
             Lista de Prioridade para Novos Projetos
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="space-y-8">
           {sortedCounts.map((projectCount, index) => {
-            const priorityLevel = index + 1; // 1, 2, 3...
+            const priorityLevel = index + 1;
             const groupMembers = membersByProjectCount[projectCount];
             const colors = getPriorityColors(index);
 
             let groupLabelText = "";
-            if (projectCount === 0) groupLabelText = `Sem projetos atuais (${groupMembers.length})`;
-            else if (projectCount === 1) groupLabelText = `Atuando em 1 projeto (${groupMembers.length})`;
-            else groupLabelText = `Atuando em 2 ou mais projetos (${groupMembers.length})`;
+            if (projectCount === 0) {
+              groupLabelText = `Sem projetos atuais (${groupMembers.length})`;
+            } else if (projectCount === 1) {
+              groupLabelText = `Atuando em 1 projeto (${groupMembers.length})`;
+            } else {
+              groupLabelText = `Atuando em 2 ou mais projetos (${groupMembers.length})`;
+            }
 
             return (
               <div key={`priority-${priorityLevel}`}>
-                {/* Priority Header */}
                 <div className="mb-4 flex items-center gap-3">
-                  <Badge className={`px-3 py-1 text-sm font-bold border ${colors.badge}`}>
+                  <Badge className={`border px-3 py-1 text-sm font-bold ${colors.badge}`}>
                     Prioridade {priorityLevel}
                   </Badge>
                   <span className="text-base font-medium text-muted-foreground">
@@ -467,44 +502,39 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                   </span>
                 </div>
 
-                {/* Members Grid */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {groupMembers.map((member) => (
                     <div
                       key={member.id}
                       className={`rounded-xl border p-4 transition-all ${colors.card}`}
                     >
-                      {/* Nome do Membro */}
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-lg font-bold text-foreground">
                           {member.nome.trim()}
                         </span>
                       </div>
 
-                      {/* Maturity Tags and all Projects */}
                       <div className="mb-4 flex flex-wrap gap-2">
                         <Badge
                           variant="outline"
-                          className={`text-sm px-2.5 py-0.5 ${getMaturidadeBadgeClass(member.maturidade)}`}
+                          className={`px-2.5 py-0.5 text-sm ${getMaturidadeBadgeClass(member.maturidade)}`}
                         >
                           {getMaturidadeLabel(member.maturidade)}
                         </Badge>
-                        
-                        {}
-                        {member.projetosList.map((proj: string, pIdx: number) => (
-                          <Badge 
-                            key={pIdx} 
-                            variant="outline" 
-                            className="bg-secondary/50 text-sm px-2.5 py-0.5 text-foreground border-border"
+
+                        {member.projetosList.map((project, projectIndex) => (
+                          <Badge
+                            key={`${member.id}-${projectIndex}`}
+                            variant="outline"
+                            className="border-border bg-secondary/50 px-2.5 py-0.5 text-sm text-foreground"
                           >
-                            {proj}
+                            {project}
                           </Badge>
                         ))}
                       </div>
 
-                      {/* Technology Tags */}
                       <div className="flex flex-wrap gap-2">
-                        {extractTechTags(member.tech).map((tech) => (
+                        {extractTechTags(member.techs).map((tech) => (
                           <span
                             key={tech}
                             className="rounded-md bg-primary/20 px-2.5 py-1 text-sm font-semibold text-primary"
