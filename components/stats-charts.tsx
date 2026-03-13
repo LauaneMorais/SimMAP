@@ -55,19 +55,29 @@ export function StatsCharts({ members }: StatsChartsProps) {
       .sort((a, b) => b.value - a.value);
   }, [members]);
 
-  const availabilityData = useMemo(() => {
+ const availabilityData = useMemo(() => {
     const counts: Record<string, number> = {};
+    
     members.forEach((m) => {
       const avail = m.disponibilidade;
       counts[avail] = (counts[avail] || 0) + 1;
     });
+
+    const getSortWeight = (name: string) => {
+      const text = name.toLowerCase();
+      if (text.includes("menos")) return 1;
+      if (text.includes("6 a 8")) return 2;
+      if (text.includes("9 a 12") || text.includes("mais")) return 3;
+      return 4; 
+    };
+
     return Object.entries(counts)
       .map(([name, value]) => ({
         name: name.replace("horas semanais", "h/sem"),
         fullName: name,
         value,
       }))
-      .sort((a, b) => b.value - a.value);
+      .sort((a, b) => getSortWeight(a.name) - getSortWeight(b.name));
   }, [members]);
 
   const maturityData = useMemo(() => {
