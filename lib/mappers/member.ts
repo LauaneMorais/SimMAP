@@ -227,7 +227,18 @@ export function rawProjectToProject(
   const nome = nomeOriginal;
   const responsavel = trimValue(rawProject.Responsável);
   const time = normalizeListField(rawProject.Time);
-  const status = trimValue(rawProject.Status);
+  const dataInicio = trimValue(rawProject["Data de Início"]);
+  const dataEncerramento = trimValue(rawProject["Data de Encerramento"]);
+  const prioridade = trimValue(rawProject.Prioridade);
+  const rawStatus = trimValue(rawProject.Status);
+  const shouldTreatAsNotStarted =
+    nomeOriginal.toUpperCase() === "DCOMP MULHERES" ||
+    (rawStatus?.toLowerCase() === "em andamento" &&
+      !dataInicio &&
+      !dataEncerramento &&
+      !responsavel &&
+      !prioridade);
+  const status = shouldTreatAsNotStarted ? "Não iniciado" : rawStatus;
 
   return {
     slug: slugify(nomeOriginal),
@@ -235,10 +246,10 @@ export function rawProjectToProject(
     nomeOriginal,
     responsavel,
     responsavelSlug: resolveMemberSlug(responsavel),
-    dataInicio: trimValue(rawProject["Data de Início"]),
-    dataEncerramento: trimValue(rawProject["Data de Encerramento"]),
+    dataInicio,
+    dataEncerramento,
     status,
-    prioridade: trimValue(rawProject.Prioridade),
+    prioridade,
     time,
     timeSlugs: time.map((name) => resolveMemberSlug(name)),
     teamSize: time.length,

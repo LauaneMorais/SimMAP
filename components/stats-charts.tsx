@@ -104,24 +104,6 @@ export function StatsCharts({ members, analyses }: StatsChartsProps) {
       description: "Média entre respondentes avaliados",
       icon: BrainCircuit,
     },
-    {
-      label: "Sugestões de Retomada",
-      value: metricValue(summaryMetrics, "Membros com sugestão de retomada"),
-      description: "Membros com oportunidade de reativação",
-      icon: Lightbulb,
-    },
-    {
-      label: "Projetos Pessoais",
-      value: metricValue(summaryMetrics, "Membros com projeto pessoal declarado"),
-      description: "Pessoas com iniciativa própria mapeada",
-      icon: Target,
-    },
-    {
-      label: "Sem Match no Forms",
-      value: analyses.unmatchedNames.notionSemForms.length,
-      description: "Membros oficiais ainda sem conciliação",
-      icon: Clock3,
-    },
   ];
 
   const courseData = analyses.byCourse;
@@ -134,7 +116,7 @@ export function StatsCharts({ members, analyses }: StatsChartsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
+      <div className="w-full flex items-center gap-2">
         <div className="h-1 w-1 rounded-full bg-primary" />
         <h2 className="text-lg font-semibold text-foreground sm:text-xl">
           Estatísticas Gerais
@@ -145,37 +127,38 @@ export function StatsCharts({ members, analyses }: StatsChartsProps) {
           </span>
         </div>
       </div>
+      <div className="w-full flex justify-center items-center">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {overviewCards.map((card) => {
+            const Icon = card.icon;
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-        {overviewCards.map((card) => {
-          const Icon = card.icon;
-
-          return (
-            <Card
-              key={card.label}
-              className="border-primary/20 bg-card/50 backdrop-blur"
-            >
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{card.label}</p>
-                    <p className="mt-2 text-3xl font-semibold text-foreground">
-                      {typeof card.value === "number" && card.label.includes("Média")
-                        ? card.value.toFixed(2)
-                        : card.value}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                      {card.description}
-                    </p>
+            return (
+              <Card
+                key={card.label}
+                className="border-primary/20 bg-card/50 backdrop-blur"
+              >
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{card.label}</p>
+                      <p className="mt-2 text-3xl font-semibold text-foreground">
+                        {typeof card.value === "number" && card.label.includes("Média")
+                          ? card.value.toFixed(2)
+                          : card.value}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                        {card.description}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-primary/20 bg-primary/10 p-3">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
                   </div>
-                  <div className="rounded-2xl border border-primary/20 bg-primary/10 p-3">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-12 2xl:gap-5">
