@@ -21,3 +21,8 @@ node_modules
 .env
 dist
 build
+
+.agents/
+.agent/
+skills-lock.json
+AGENTS.md
