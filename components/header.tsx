@@ -36,13 +36,6 @@ export function Header() {
               </span>
             </div>
           </Link>
-
-          <div className="hidden items-center gap-2 rounded-full bg-primary/10 px-4 py-2 lg:flex">
-            <Users className="h-4 w-4 text-primary" />
-            <span className="text-base font-medium text-primary">
-              Mapeamento de Perfis
-            </span>
-          </div>
         </div>
 
         <nav className="flex flex-wrap gap-2">

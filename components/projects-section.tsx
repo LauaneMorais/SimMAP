@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { Folder, Users, Rocket, Star, AlertCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { Member } from "@/lib/types";
 
 interface ProjectsSectionProps {
@@ -149,6 +150,7 @@ function getPriorityColors(index: number) {
 }
 
 export function ProjectsSection({ members }: ProjectsSectionProps) {
+  const isMobile = useIsMobile();
   const projectStats = useMemo(() => {
     const projectMembers: Record<string, Member[]> = {};
 
@@ -222,7 +224,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <div className="h-1 w-1 rounded-full bg-primary" />
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground sm:text-xl">
           Atuação em Projetos
         </h2>
       </div>
@@ -271,9 +273,9 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </Card>
       </div>
 
-      <Card className="border-primary/20 bg-card/50 backdrop-blur">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-xl">
+        <Card className="border-primary/20 bg-card/50 backdrop-blur">
+          <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Folder className="h-5 w-5 text-primary" />
             Membros por Projeto Atual
           </CardTitle>
@@ -283,27 +285,32 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
             config={{
               value: { label: "Membros", color: "#a855f7" },
             }}
-            className="h-[400px] w-full"
+            className="h-[340px] w-full sm:h-[400px]"
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={projectStats}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                margin={{
+                  top: 5,
+                  right: isMobile ? 12 : 30,
+                  left: 10,
+                  bottom: 5,
+                }}
               >
-                <XAxis type="number" stroke="#94a3b8" fontSize={12} />
+                <XAxis type="number" stroke="#94a3b8" fontSize={isMobile ? 10 : 12} />
 
                 <YAxis
                   dataKey="name"
                   type="category"
                   stroke="#94a3b8"
-                  width={180}
+                  width={isMobile ? 112 : 180}
                   interval={0}
                   tick={(props: any) => {
                     const { x, y, payload } = props;
                     const text =
-                      payload.value.length > 50
-                        ? `${payload.value.substring(0, 22)}...`
+                      payload.value.length > (isMobile ? 24 : 50)
+                        ? `${payload.value.substring(0, isMobile ? 12 : 22)}...`
                         : payload.value;
 
                     return (
@@ -313,7 +320,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                         dy={4}
                         textAnchor="end"
                         fill="#94a3b8"
-                        fontSize={14}
+                        fontSize={isMobile ? 11 : 14}
                       >
                         {text}
                       </text>
@@ -357,7 +364,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                 key={project.fullName}
                 className="rounded-lg border border-border/50 bg-secondary/30 p-4"
               >
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <h4 className="font-medium text-foreground">
                     {project.fullName}
                   </h4>
@@ -381,9 +388,9 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-primary/20 bg-card/50 backdrop-blur">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center justify-between text-xl">
+        <Card className="border-primary/20 bg-card/50 backdrop-blur">
+          <CardHeader className="pb-2">
+          <CardTitle className="flex flex-col gap-3 text-lg sm:flex-row sm:items-center sm:justify-between sm:text-xl">
             <div className="flex items-center gap-2">
               <Rocket className="h-5 w-5 text-primary" />
               Interesse em Projetos Futuros
@@ -398,27 +405,32 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
             config={{
               value: { label: "Interessados", color: "#a855f7" },
             }}
-            className="h-[280px] w-full"
+            className="h-[320px] w-full sm:h-[280px]"
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={futureProjectsStats}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                margin={{
+                  top: 5,
+                  right: isMobile ? 12 : 30,
+                  left: 10,
+                  bottom: 5,
+                }}
               >
-                <XAxis type="number" stroke="#94a3b8" fontSize={12} />
+                <XAxis type="number" stroke="#94a3b8" fontSize={isMobile ? 10 : 12} />
 
                 <YAxis
                   dataKey="name"
                   type="category"
                   stroke="#94a3b8"
-                  width={200}
+                  width={isMobile ? 126 : 200}
                   interval={0}
                   tick={(props: any) => {
                     const { x, y, payload } = props;
                     const text =
-                      payload.value.length > 25
-                        ? `${payload.value.substring(0, 25)}...`
+                      payload.value.length > (isMobile ? 18 : 25)
+                        ? `${payload.value.substring(0, isMobile ? 18 : 25)}...`
                         : payload.value;
 
                     return (
@@ -428,7 +440,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
                         dy={4}
                         textAnchor="end"
                         fill="#94a3b8"
-                        fontSize={14}
+                        fontSize={isMobile ? 11 : 14}
                       >
                         {text}
                       </text>
@@ -470,7 +482,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
 
       <Card className="border-primary/20 bg-card/50 backdrop-blur">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-2xl">
+          <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl">
             <Star className="h-6 w-6 text-primary" />
             Lista de Prioridade para Novos Projetos
           </CardTitle>
@@ -493,7 +505,7 @@ export function ProjectsSection({ members }: ProjectsSectionProps) {
 
             return (
               <div key={`priority-${priorityLevel}`}>
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                   <Badge className={`border px-3 py-1 text-sm font-bold ${colors.badge}`}>
                     Prioridade {priorityLevel}
                   </Badge>

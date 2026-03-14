@@ -20,6 +20,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Users, Code, GraduationCap, Clock, Target } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { Member } from "@/lib/types";
 
 interface StatsChartsProps {
@@ -29,6 +30,7 @@ interface StatsChartsProps {
 const COLORS = ["#a855f7", "#c084fc", "#d8b4fe", "#8b5cf6", "#7c3aed", "#6d28d9", "#5b21b6"];
 
 export function StatsCharts({ members }: StatsChartsProps) {
+  const isMobile = useIsMobile();
   const totalMembers = members.length;
 
   const courseData = useMemo(() => {
@@ -149,10 +151,10 @@ export function StatsCharts({ members }: StatsChartsProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <div className="h-1 w-1 rounded-full bg-primary" />
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground sm:text-xl">
           Estatísticas Gerais
         </h2>
-        <div className="ml-2 rounded-full bg-primary/20 px-3 py-1">
+        <div className="ml-1 rounded-full bg-primary/20 px-2.5 py-1 sm:ml-2 sm:px-3">
           <span className="text-sm font-medium text-primary">
             {totalMembers} membros
           </span>
@@ -162,7 +164,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="col-span-full border-primary/20 bg-card/50 backdrop-blur lg:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Code className="h-5 w-5 text-primary" />
               Tecnologias Mais Usadas
             </CardTitle>
@@ -172,21 +174,26 @@ export function StatsCharts({ members }: StatsChartsProps) {
               config={{
                 value: { label: "Membros", color: "#a855f7" },
               }}
-              className="h-[280px] w-full"
+              className="h-[260px] w-full sm:h-[280px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={techData}
                   layout="vertical"
-                  margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+                  margin={{
+                    top: 5,
+                    right: isMobile ? 8 : 30,
+                    left: isMobile ? 8 : 60,
+                    bottom: 5,
+                  }}
                 >
-                  <XAxis type="number" stroke="#94a3b8" fontSize={12} />
+                  <XAxis type="number" stroke="#94a3b8" fontSize={isMobile ? 10 : 12} />
                   <YAxis
                     dataKey="name"
                     type="category"
                     stroke="#94a3b8"
-                    fontSize={14}
-                    width={55}
+                    fontSize={isMobile ? 11 : 14}
+                    width={isMobile ? 44 : 55}
                     interval={0}
                   />
                   <ChartTooltip
@@ -214,7 +221,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <GraduationCap className="h-5 w-5 text-primary" />
               Cursos
             </CardTitle>
@@ -224,7 +231,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
               config={{
                 value: { label: "Membros", color: "#a855f7" },
               }}
-              className="h-[240px] w-full"
+              className="h-[220px] w-full sm:h-[240px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -232,8 +239,8 @@ export function StatsCharts({ members }: StatsChartsProps) {
                     data={courseData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
+                    innerRadius={isMobile ? 28 : 40}
+                    outerRadius={isMobile ? 62 : 80}
                     paddingAngle={3}
                     dataKey="value"
                     animationDuration={800}
@@ -258,12 +265,14 @@ export function StatsCharts({ members }: StatsChartsProps) {
                       name,
                     ]}
                   />
-                  <Legend
-                    wrapperStyle={{ fontSize: "13px" }}
-                    formatter={(value) => (
-                      <span style={{ color: "#e2e8f0" }}>{value}</span>
-                    )}
-                  />
+                  {!isMobile ? (
+                    <Legend
+                      wrapperStyle={{ fontSize: "13px" }}
+                      formatter={(value) => (
+                        <span style={{ color: "#e2e8f0" }}>{value}</span>
+                      )}
+                    />
+                  ) : null}
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -272,7 +281,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
         <Card className="border-primary/20 bg-card/50 backdrop-blur md:col-span-2 lg:col-span-1">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Target className="h-5 w-5 text-primary" />
               Áreas de Carreira
             </CardTitle>
@@ -282,23 +291,28 @@ export function StatsCharts({ members }: StatsChartsProps) {
               config={{
                 value: { label: "Membros", color: "#a855f7" },
               }}
-              className="h-[240px] w-full"
+              className="h-[260px] w-full sm:h-[240px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={careerData.slice(0, 6)}
-                  margin={{ top: 5, right: 10, left: 10, bottom: 40 }}
+                  margin={{
+                    top: 5,
+                    right: 10,
+                    left: isMobile ? 0 : 10,
+                    bottom: isMobile ? 56 : 40,
+                  }}
                 >
                   <XAxis
                     dataKey="name"
                     stroke="#94a3b8"
-                    fontSize={11}
-                    angle={-35}
+                    fontSize={isMobile ? 10 : 11}
+                    angle={isMobile ? -42 : -35}
                     textAnchor="end"
                     interval={0}
-                    height={60}
+                    height={isMobile ? 76 : 60}
                   />
-                  <YAxis stroke="#94a3b8" fontSize={12} />
+                  <YAxis stroke="#94a3b8" fontSize={isMobile ? 10 : 12} />
                   <ChartTooltip
                     content={<ChartTooltipContent />}
                     cursor={{ fill: "rgba(168, 85, 247, 0.1)" }}
@@ -324,7 +338,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Clock className="h-5 w-5 text-primary" />
               Disponibilidade Semanal
             </CardTitle>
@@ -334,7 +348,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
               config={{
                 value: { label: "Membros", color: "#a855f7" },
               }}
-              className="h-[200px] w-full"
+              className="h-[210px] w-full sm:h-[200px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -342,8 +356,8 @@ export function StatsCharts({ members }: StatsChartsProps) {
                     data={availabilityData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={35}
-                    outerRadius={70}
+                    innerRadius={isMobile ? 24 : 35}
+                    outerRadius={isMobile ? 56 : 70}
                     paddingAngle={3}
                     dataKey="value"
                     animationDuration={800}
@@ -368,12 +382,14 @@ export function StatsCharts({ members }: StatsChartsProps) {
                       props.payload.fullName || props.payload.name,
                     ]}
                   />
-                  <Legend
-                    wrapperStyle={{ fontSize: "14px" }}
-                    formatter={(value) => (
-                      <span style={{ color: "#e2e8f0" }}>{value}</span>
-                    )}
-                  />
+                  {!isMobile ? (
+                    <Legend
+                      wrapperStyle={{ fontSize: "14px" }}
+                      formatter={(value) => (
+                        <span style={{ color: "#e2e8f0" }}>{value}</span>
+                      )}
+                    />
+                  ) : null}
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -382,7 +398,7 @@ export function StatsCharts({ members }: StatsChartsProps) {
 
         <Card className="border-primary/20 bg-card/50 backdrop-blur">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Users className="h-5 w-5 text-primary" />
               Nível de Maturidade
             </CardTitle>
@@ -392,22 +408,28 @@ export function StatsCharts({ members }: StatsChartsProps) {
               config={{
                 value: { label: "Membros", color: "#a855f7" },
               }}
-              className="h-[200px] w-full"
+              className="h-[220px] w-full sm:h-[200px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={maturityData}
-                  margin={{ top: 5, right: 10, left: 10, bottom: 30 }}
+                  margin={{
+                    top: 5,
+                    right: 10,
+                    left: isMobile ? 0 : 10,
+                    bottom: isMobile ? 42 : 30,
+                  }}
                 >
                   <XAxis
                     dataKey="name"
                     stroke="#94a3b8"
-                    fontSize={13}
-                    angle={-20}
+                    fontSize={isMobile ? 10 : 13}
+                    angle={isMobile ? -28 : -20}
                     textAnchor="end"
                     interval={0}
+                    height={isMobile ? 56 : 40}
                   />
-                  <YAxis stroke="#94a3b8" fontSize={12} />
+                  <YAxis stroke="#94a3b8" fontSize={isMobile ? 10 : 12} />
                   <ChartTooltip
                     content={<ChartTooltipContent />}
                     cursor={{ fill: "rgba(168, 85, 247, 0.1)" }}

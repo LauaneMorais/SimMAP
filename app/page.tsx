@@ -75,23 +75,8 @@ export default function MapeamentoPage() {
       <div className="relative">
         <Header />
 
-        <main className="container mx-auto space-y-8 px-4 py-8">
-          <div className="mb-8 text-center">
-            <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-              Mapeamento de Perfis
-            </h1>
-            <p className="mt-2 text-xl text-pretty text-muted-foreground">
-              Visualize os dados e habilidades dos membros da LAWD
-            </p>
-          </div>
-
-          <MemberSelector
-            members={members}
-            selectedMember={selectedMember}
-            onSelect={setSelectedMember}
-          />
-
-          <div className="flex items-center gap-4 py-4">
+        <main className="container mx-auto space-y-6 px-4 py-6 sm:space-y-8 sm:py-8">
+          <div className="flex items-center gap-3 py-3 sm:gap-4 sm:py-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Dashboard
@@ -101,7 +86,7 @@ export default function MapeamentoPage() {
 
           <StatsCharts members={members} />
 
-          <div className="flex items-center gap-4 py-4">
+          <div className="flex items-center gap-3 py-3 sm:gap-4 sm:py-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
             <span className="rounded-full bg-primary/10 px-4 py-1 text-xs font-medium uppercase tracking-wider text-primary">
               Projetos

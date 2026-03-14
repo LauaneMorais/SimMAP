@@ -70,14 +70,14 @@ export function MemberSelector({
                 role="combobox"
                 aria-expanded={open}
                 className="w-full justify-between border-border/60 bg-secondary/50 py-6 text-base hover:bg-secondary"
-              >
-                {selectedMember ? selectedMember.nome.trim() : "Escolha um membro..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[400px] p-0">
-              <Command>
-                <CommandInput placeholder="Buscar membro..." className="text-base" />
+            >
+              {selectedMember ? selectedMember.nome.trim() : "Escolha um membro..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[min(24rem,calc(100vw-2rem))] p-0">
+            <Command>
+              <CommandInput placeholder="Buscar membro..." className="text-base" />
                 <CommandList>
                   <CommandEmpty>Nenhum membro encontrado.</CommandEmpty>
                   <CommandGroup>
