@@ -110,11 +110,6 @@ export async function getDashboardData(): Promise<DashboardData> {
   }
 }
 
-export async function listMembers() {
-  const { members } = await getDashboardData();
-  return members;
-}
-
 export async function getMemberBySlug(slug: string) {
   const { members } = await getDashboardData();
   const member = members.find((item) => item.slug === slug);
