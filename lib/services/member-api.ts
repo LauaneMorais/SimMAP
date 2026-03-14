@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import type { Member, PartialMemberInput } from "@/lib/types";
+import type { Member } from "@/lib/types";
 
 const memberApiClient = axios.create({
   baseURL: "/api",
@@ -16,19 +16,10 @@ export const memberApi = {
     const response = await memberApiClient.get<Member[]>("/membros");
     return response.data;
   },
-  async getById(id: number) {
-    const response = await memberApiClient.get<Member>(`/membros/${id}`);
+  async getById(id: string) {
+    const response = await memberApiClient.get<Member>(
+      `/membros/${encodeURIComponent(id)}`
+    );
     return response.data;
-  },
-  async create(payload: PartialMemberInput) {
-    const response = await memberApiClient.post<Member>("/membros", payload);
-    return response.data;
-  },
-  async update(id: number, payload: PartialMemberInput) {
-    const response = await memberApiClient.put<Member>(`/membros/${id}`, payload);
-    return response.data;
-  },
-  async remove(id: number) {
-    await memberApiClient.delete(`/membros/${id}`);
   },
 };

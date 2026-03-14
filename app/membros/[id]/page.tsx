@@ -1,48 +1,27 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { MemberProfileContent } from "@/components/member-profile-content";
-import { Spinner } from "@/components/ui/spinner";
-import { useMember } from "@/hooks/use-member";
+import { MemberServiceError, getMemberBySlug } from "@/lib/services/member-service";
 
-export default function MemberProfilePage() {
-  const params = useParams<{ id: string }>();
-  const memberId = Number(params.id);
-  const { member, loading, error } = useMember(
-    Number.isFinite(memberId) ? memberId : null
-  );
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Header />
-        <main className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Spinner className="h-8 w-8 text-primary" />
-            <p className="text-muted-foreground">Carregando perfil...</p>
-          </div>
-        </main>
-      </div>
-    );
-  }
+export default async function MemberProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  let member;
 
-  if (error || !member) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto px-4 py-10">
-          <div className="rounded-3xl border border-destructive/30 bg-destructive/10 p-6 text-center">
-            <h1 className="text-2xl font-semibold text-white">
-              Não foi possível carregar este membro
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {error ?? "Membro não encontrado."}
-            </p>
-          </div>
-        </main>
-      </div>
-    );
+  try {
+    member = await getMemberBySlug(id);
+  } catch (error) {
+    if (error instanceof MemberServiceError && error.status === 404) {
+      notFound();
+    }
+
+    throw error;
   }
 
   return (

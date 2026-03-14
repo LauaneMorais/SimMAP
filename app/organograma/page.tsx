@@ -1,48 +1,12 @@
-"use client";
-
 import { Header } from "@/components/header";
 import { OrganogramSection } from "@/components/organogram-section";
-import { Spinner } from "@/components/ui/spinner";
-import { useMembers } from "@/hooks/use-members";
+import { getDashboardData } from "@/lib/services/member-service";
 
-export default function OrganogramaPage() {
-  const { members, loading, error } = useMembers();
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Header />
-        <main className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Spinner className="h-8 w-8 text-primary" />
-            <p className="text-muted-foreground">Montando organograma...</p>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Header />
-        <main className="flex flex-1 items-center justify-center px-4">
-          <div className="max-w-md rounded-3xl border border-destructive/30 bg-destructive/10 p-6 text-center">
-            <p className="text-lg font-medium text-foreground">
-              Erro ao carregar organograma
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-            >
-              Tentar novamente
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
+export default async function OrganogramaPage() {
+  const { members } = await getDashboardData();
 
   return (
     <div className="min-h-screen bg-background bg-grid">

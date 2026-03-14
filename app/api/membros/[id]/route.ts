@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { normalizeMemberPayload } from "@/lib/mappers/member";
 import {
-  deleteMember,
-  getMemberById,
+  getMemberBySlug,
   MemberServiceError,
-  updateMember,
 } from "@/lib/services/member-service";
 
 export const runtime = "nodejs";
@@ -27,14 +24,14 @@ function handleError(error: unknown) {
   );
 }
 
-function parseId(value: string) {
-  const id = Number(value);
+function parseSlug(value: string) {
+  const slug = value.trim();
 
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new MemberServiceError("ID de membro invalido.", 400);
+  if (!slug) {
+    throw new MemberServiceError("Identificador de membro invalido.", 400);
   }
 
-  return id;
+  return slug;
 }
 
 export async function GET(
@@ -43,49 +40,8 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    const member = await getMemberById(parseId(id));
+    const member = await getMemberBySlug(parseSlug(id));
     return NextResponse.json(member);
-  } catch (error) {
-    return handleError(error);
-  }
-}
-
-export async function PUT(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await context.params;
-    const payload = normalizeMemberPayload(await request.json());
-    const member = await updateMember(parseId(id), payload);
-    return NextResponse.json(member);
-  } catch (error) {
-    return handleError(error);
-  }
-}
-
-export async function PATCH(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await context.params;
-    const payload = normalizeMemberPayload(await request.json());
-    const member = await updateMember(parseId(id), payload);
-    return NextResponse.json(member);
-  } catch (error) {
-    return handleError(error);
-  }
-}
-
-export async function DELETE(
-  _: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await context.params;
-    await deleteMember(parseId(id));
-    return new NextResponse(null, { status: 204 });
   } catch (error) {
     return handleError(error);
   }

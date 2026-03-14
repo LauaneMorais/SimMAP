@@ -153,6 +153,25 @@ def merge_dataframe_columns_values(
     return result
 
 
+def merge_project_columns(df, target_col, source_col):
+    """Merge two project columns preserving order and removing duplicates."""
+    if target_col not in df.columns or source_col not in df.columns:
+        return df
+
+    result = df.copy()
+    result[target_col] = result.apply(
+        lambda row: list(
+            dict.fromkeys(
+                str(item).strip()
+                for item in (_to_list_value(row[target_col]) + _to_list_value(row[source_col]))
+                if str(item).strip()
+            )
+        ),
+        axis=1,
+    )
+    return result
+
+
 def build_project_series(
     df_projetos,
     nome_lookup,
@@ -266,6 +285,7 @@ def normalize_project_collection(
     loose_lookup,
     aliases=None,
     unmatched=None,
+    unmatched_originals=None,
 ):
     """Normalize a project value that may be a list, comma-string or scalar."""
     if is_missing_scalar(value):
@@ -281,6 +301,8 @@ def normalize_project_collection(
             if unmatched is not None and resolved == normalize_project_key(item, aliases=aliases):
                 if resolved not in canonical_lookup:
                     unmatched.add(str(item))
+                    if unmatched_originals is not None:
+                        unmatched_originals.setdefault(resolved, str(item).strip())
         return normalized_items
 
     if isinstance(value, str) and "," in value:
@@ -292,12 +314,16 @@ def normalize_project_collection(
             if unmatched is not None and resolved == normalize_project_key(item, aliases=aliases):
                 if resolved not in canonical_lookup:
                     unmatched.add(str(item))
+                    if unmatched_originals is not None:
+                        unmatched_originals.setdefault(resolved, str(item).strip())
         return normalized_parts
 
     resolved = resolve_project_name(value, canonical_lookup, loose_lookup, aliases=aliases)
     if unmatched is not None and resolved == normalize_project_key(value, aliases=aliases):
         if resolved not in canonical_lookup:
             unmatched.add(str(value))
+            if unmatched_originals is not None:
+                unmatched_originals.setdefault(resolved, str(value).strip())
     return resolved
 
 
@@ -348,6 +374,7 @@ def standardize_project_keys(
         ]
 
     unmatched_projects = set()
+    unmatched_project_labels = {}
     for col in df_project_columns:
         if col not in df.columns:
             continue
@@ -364,8 +391,64 @@ def standardize_project_keys(
                 loose_lookup=loose_lookup,
                 aliases=aliases,
                 unmatched=unmatched_projects,
+                unmatched_originals=unmatched_project_labels,
             )
         )
+
+    forms_project_col = "Projetos Declarados no Forms"
+    current_project_columns = ["Projetos Atuais", "Projetos Atuais Em Andamento"]
+    for col in current_project_columns:
+        df = merge_project_columns(df, col, forms_project_col)
+
+    if forms_project_col in df.columns:
+        known_projects = set(df_projetos[project_col].dropna().tolist())
+        project_name_original_col = f"{project_col} Original"
+        time_col = "Time" if "Time" in df_projetos.columns else "times" if "times" in df_projetos.columns else None
+        project_members = {}
+        synthetic_projects = {}
+
+        for _, row in df[[c for c in ["Nome Completo", forms_project_col] if c in df.columns]].iterrows():
+            member_name = row.get("Nome Completo")
+            for project_name in _to_list_value(row.get(forms_project_col)):
+                if member_name:
+                    members = project_members.setdefault(project_name, [])
+                    if member_name not in members:
+                        members.append(member_name)
+
+                if project_name in known_projects:
+                    continue
+
+                entry = synthetic_projects.setdefault(
+                    project_name,
+                    {
+                        project_col: project_name,
+                        project_name_original_col: unmatched_project_labels.get(project_name, project_name),
+                    },
+                )
+
+                if time_col is not None:
+                    entry[time_col] = project_members.get(project_name, [])
+
+        if time_col is not None and project_members:
+            df_projetos[time_col] = df_projetos.apply(
+                lambda row: list(
+                    dict.fromkeys(
+                        _to_list_value(row[time_col]) + project_members.get(row[project_col], [])
+                    )
+                ),
+                axis=1,
+            )
+
+        if synthetic_projects:
+            new_rows = []
+            for entry in synthetic_projects.values():
+                row_data = {col: None for col in df_projetos.columns}
+                row_data.update(entry)
+                if "Status" in row_data:
+                    row_data["Status"] = "Em andamento"
+                new_rows.append(row_data)
+
+            df_projetos = pd.concat([df_projetos, pd.DataFrame(new_rows)], ignore_index=True)
 
     if report_unmatched and unmatched_projects:
         print("Projetos sem correspondencia com o padrao de df_projetos:")

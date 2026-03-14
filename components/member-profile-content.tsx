@@ -1,6 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BriefcaseBusiness, CalendarDays, GraduationCap, Layers3, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  BriefcaseBusiness,
+  CalendarDays,
+  CircleDashed,
+  FileSearch,
+  GraduationCap,
+  Layers3,
+  Lightbulb,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMemberPhoto } from "@/lib/member-media";
@@ -43,6 +56,22 @@ function renderList(items: string[], emptyLabel = "Não informado") {
       {item}
     </span>
   ));
+}
+
+function renderParagraphs(items: string[], emptyLabel: string) {
+  if (items.length === 0) {
+    return <p className="text-sm text-muted-foreground">{emptyLabel}</p>;
+  }
+
+  return items.map((item) => (
+    <p key={item} className="text-sm leading-6 text-white/80">
+      {item}
+    </p>
+  ));
+}
+
+function formatTechnicalScore(score: number | null) {
+  return typeof score === "number" ? `${score.toFixed(1)}/10` : "Sem nota";
 }
 
 export function MemberProfileContent({
@@ -100,6 +129,15 @@ export function MemberProfileContent({
                 <Sparkles className="h-3.5 w-3.5" />
                 Perfil do Membro
               </div>
+              <Badge
+                className={
+                  member.respondeuForms
+                    ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
+                    : "border-amber-400/20 bg-amber-400/10 text-amber-200"
+                }
+              >
+                {member.respondeuForms ? "Dados conciliados do Forms" : "Sem resposta no Forms"}
+              </Badge>
               {isModal ? (
                 <>
                   <Badge className="border-white/10 bg-white/10 text-white">
@@ -127,7 +165,7 @@ export function MemberProfileContent({
                 </h2>
                 {showPageLink ? (
                   <Link
-                    href={`/membros/${member.id}`}
+                    href={`/membros/${member.slug}`}
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70"
                   >
                     Abrir página
@@ -136,10 +174,26 @@ export function MemberProfileContent({
                 ) : null}
               </div>
               <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                Perfil consolidado a partir do mapeamento da LAWD.
+                Perfil consolidado a partir do mapeamento da LAWD, com conciliação entre Notion, projetos oficiais e respostas do Forms.
               </p>
             </div>
           </div>
+
+          {!member.respondeuForms ? (
+            <Card className="border-amber-400/20 bg-amber-400/8">
+              <CardContent className="flex items-start gap-3 p-4">
+                <FileSearch className="mt-0.5 h-5 w-5 text-amber-200" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-100">
+                    Perfil parcial
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-amber-50/80">
+                    Este membro existe na base oficial, mas não teve resposta do Forms conciliada no pipeline atual. Os campos analíticos podem aparecer vazios.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Card className="border-white/10 bg-black/20 sm:col-span-2">
@@ -187,11 +241,12 @@ export function MemberProfileContent({
             <Card className="border-white/10 bg-black/20">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                  <Layers3 className="h-4 w-4 text-primary" />
-                  Carreira
+                  <CalendarDays className="h-4 w-4 text-primary" />
+                  Jornada na Liga
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {renderList(member.carreira)}
+                <div className="mt-3 space-y-2 text-sm text-white/80">
+                  <p>Entrada: {member.entrada ?? "Não informada"}</p>
+                  <p>Tempo de liga: {member.tempoLiga ?? "Não informado"}</p>
                 </div>
               </CardContent>
             </Card>
@@ -199,11 +254,12 @@ export function MemberProfileContent({
             <Card className="border-white/10 bg-black/20">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                  <CalendarDays className="h-4 w-4 text-primary" />
-                  Datas
+                  <Target className="h-4 w-4 text-primary" />
+                  Sinais do Forms
                 </div>
                 <div className="mt-3 space-y-2 text-sm text-white/80">
-                  <p>Entrada: {member.entrada ?? "Não informada"}</p>
+                  <p>Nota técnica: {formatTechnicalScore(member.notaTecnica)}</p>
+                  <p>Última resposta: {member.dataResposta ?? "Sem registro"}</p>
                   <p>Aniversário: {member.aniversario ?? "Não informado"}</p>
                 </div>
               </CardContent>
@@ -212,7 +268,7 @@ export function MemberProfileContent({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="border-white/10 bg-black/20">
           <CardContent className="p-5">
             <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
@@ -238,6 +294,28 @@ export function MemberProfileContent({
         <Card className="border-white/10 bg-black/20">
           <CardContent className="p-5">
             <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
+              Carreira
+            </h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {renderList(member.carreira)}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-white/10 bg-black/20">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
+              Atributos Pessoais
+            </h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {renderList(member.atributos, "Sem atributos declarados")}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-white/10 bg-black/20">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
               Projetos Atuais
             </h3>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -249,7 +327,7 @@ export function MemberProfileContent({
         <Card className="border-white/10 bg-black/20">
           <CardContent className="p-5">
             <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
-              Interesse em Projetos
+              Projetos com Interesse
             </h3>
             <div className="mt-4 flex flex-wrap gap-2">
               {renderList(member.projetosInteresse, "Sem interesses registrados")}
@@ -275,6 +353,60 @@ export function MemberProfileContent({
             </h3>
             <div className="mt-4 flex flex-wrap gap-2">
               {renderList(member.projetosFinalizados, "Sem projetos finalizados")}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-white/10 bg-black/20">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
+              Declarados no Forms
+            </h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {renderList(member.projetosDeclaradosForms, "Nenhum projeto declarado")}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card className="border-white/10 bg-black/20 xl:col-span-2">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
+              <Lightbulb className="h-4 w-4 text-primary" />
+              Objetivo na LAWD
+            </div>
+            <div className="mt-4 space-y-3">
+              {renderParagraphs(
+                member.objetivoLawd,
+                "Nenhum objetivo declarado no Forms."
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-white/10 bg-black/20">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
+              <Layers3 className="h-4 w-4 text-primary" />
+              Projeto Pessoal
+            </div>
+            <div className="mt-4 space-y-3">
+              <Badge
+                className={
+                  member.possuiProjetoPessoal
+                    ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
+                    : "border-white/10 bg-white/8 text-white/70"
+                }
+              >
+                {member.possuiProjetoPessoal
+                  ? "Possui projeto pessoal"
+                  : "Sem projeto pessoal declarado"}
+              </Badge>
+              <p className="text-sm leading-6 text-white/80">
+                {member.propostaProjetoPessoal ??
+                  "Nenhuma proposta de projeto pessoal registrada."}
+              </p>
             </div>
           </CardContent>
         </Card>

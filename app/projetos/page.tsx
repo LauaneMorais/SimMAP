@@ -1,19 +1,26 @@
-import { DashboardShell } from "@/components/dashboard-shell";
+import type { Metadata } from "next";
 import { Header } from "@/components/header";
+import { ProjectsGallery } from "@/components/projects-gallery";
 import { getDashboardData } from "@/lib/services/member-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export default async function MapeamentoPage() {
+export const metadata: Metadata = {
+  title: "Projetos | SimMAP",
+  description:
+    "Visão detalhada dos projetos da LAWD com status, prioridade, responsáveis e equipe.",
+};
+
+export default async function ProjectsPage() {
   const data = await getDashboardData();
 
   return (
     <div className="min-h-screen bg-background bg-grid">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -left-24 top-0 h-[30rem] w-[30rem] rounded-full bg-primary/12 blur-3xl" />
+        <div className="absolute right-0 top-1/3 h-[28rem] w-[28rem] rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-fuchsia-500/8 blur-3xl" />
       </div>
 
       <div className="relative">
@@ -23,16 +30,16 @@ export default async function MapeamentoPage() {
           <div className="flex items-center gap-3 py-3 sm:gap-4 sm:py-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Dashboard
+              Projetos
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
           </div>
 
-          <DashboardShell data={data} />
+          <ProjectsGallery projects={data.projects} members={data.members} />
 
           <footer className="mt-12 border-t border-border/40 py-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Desenvolvido por{" "}
+              Mapa consolidado de projetos da{" "}
               <span className="font-semibold text-primary">LAWD</span> © 2026
             </p>
           </footer>

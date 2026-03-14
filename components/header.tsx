@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FolderKanban, Network, Users } from "lucide-react";
+import { FolderKanban, FolderOpen, Network } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: FolderKanban },
+  { href: "/projetos", label: "Projetos", icon: FolderOpen },
   { href: "/organograma", label: "Organograma", icon: Network },
 ];
 

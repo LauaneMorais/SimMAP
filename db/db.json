@@ -72,7 +72,9 @@
       "Áreas de atuação": [
         "Ensino"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "UFS.BR"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -265,7 +267,9 @@
       "Áreas de atuação": [
         "RH"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "DCOMP MULHERES"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -566,7 +570,9 @@
       "Áreas de atuação": [
         "Eventos"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "UFS.BR"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -635,7 +641,9 @@
       "Áreas de atuação": [
         "Adm"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "POA - MPSE"
+      ],
       "Projetos Finalizados": [
         "SITE DO LEPFS",
         "SITE DO PS"
@@ -812,7 +820,9 @@
       "Áreas de atuação": [
         "Projetos"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "POA - MPSE"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -943,7 +953,10 @@
       "Áreas de atuação": [
         "Ensino"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "POA - MPSE",
+        "CRIAJUNTO"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -1311,7 +1324,8 @@
         "Projetos"
       ],
       "Projetos Atuais Em Andamento": [
-        "UFS.BR"
+        "UFS.BR",
+        "POA - MPSE"
       ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
@@ -1721,7 +1735,9 @@
       "Áreas de atuação": [
         "Marketing"
       ],
-      "Projetos Atuais Em Andamento": [],
+      "Projetos Atuais Em Andamento": [
+        "UFS.BR"
+      ],
       "Projetos Finalizados": [],
       "Projetos Coordenados": [],
       "Projetos com Interesse": [
@@ -2048,7 +2064,10 @@
         "JOAO FELIPE QUENTINO",
         "MARIA LUIZA FERREIRA MATOS",
         "PAULO MARQUES DE OLIVEIRA SILVA",
-        "PEDRO CORREA CASTELLO BRANCO"
+        "PEDRO CORREA CASTELLO BRANCO",
+        "JESSICA CARVALHO VIANA",
+        "GABRIEL DOS SANTOS ALMEIDA",
+        "PEDRO LUCAS SOUZA DE NOVAES"
       ]
     },
     {
@@ -2147,7 +2166,11 @@
       "Status": "Em andamento",
       "Prioridade": "Alta",
       "Time": [
-        "JOAO FELIPE QUENTINO"
+        "JOAO FELIPE QUENTINO",
+        "VINICIUS MORAIS SOUZA",
+        "GIULIAN FABIO BASTOS AMORIM LIMA",
+        "ERICK JUAN GOIS OLIVEIRA",
+        "PEDRO CORREA CASTELLO BRANCO"
       ]
     },
     {
@@ -2230,7 +2253,20 @@
         "DAVI BITTENCOURT DE ALMEIDA",
         "DIMITRI MARTINS OLIVEIRA",
         "ENZO EMANUEL MAIA COSTA",
-        "LUAN MEIRELES PINHEIRO GUIMARAES"
+        "LUAN MEIRELES PINHEIRO GUIMARAES",
+        "ERICK JUAN GOIS OLIVEIRA"
+      ]
+    },
+    {
+      "Nome do Projeto": "DCOMP MULHERES",
+      "Nome do Projeto Original": "DCOMP MULHERES",
+      "Responsável": null,
+      "Data de Início": null,
+      "Data de Encerramento": null,
+      "Status": "Em andamento",
+      "Prioridade": null,
+      "Time": [
+        "WANESSA SILVA SANTOS"
       ]
     }
   ],

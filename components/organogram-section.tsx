@@ -193,7 +193,7 @@ function GraphNodeCard({
             <div className="flex flex-wrap gap-2">
               {group.members.map(({ member, role }) => (
                 <span
-                  key={`${node.id}-${group.title}-${member.id}`}
+                  key={`${node.id}-${group.title}-${member.slug}`}
                   className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs text-white/80"
                 >
                   {member.nome} · {role}
@@ -211,7 +211,7 @@ function GraphNodeCard({
             <div className="flex flex-wrap gap-2">
               {node.effectiveMembers.map((member) => (
                 <span
-                  key={`${node.id}-${member.id}-member`}
+                  key={`${node.id}-${member.slug}-member`}
                   className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/70"
                 >
                   {member.nome}
@@ -257,7 +257,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
           null;
 
         const effectiveMembers = assignedMembers.filter(
-          (member) => member.id !== director?.id
+          (member) => member.slug !== director?.slug
         );
 
         return {
@@ -543,7 +543,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
                                   </div>
                                   {group.members.map(({ member, role }) => (
                                     <MemberPill
-                                      key={`${node.id}-${group.title}-${member.id}`}
+                                      key={`${node.id}-${group.title}-${member.slug}`}
                                       member={member}
                                       role={role}
                                       accent={node.type === "corp" ? "institutional" : "default"}
@@ -573,7 +573,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
                           <div className="grid gap-3 md:grid-cols-2">
                             {node.effectiveMembers.map((member) => (
                               <MemberPill
-                                key={`${node.id}-${member.id}-effective`}
+                                key={`${node.id}-${member.slug}-effective`}
                                 member={member}
                                 role="Membro efetivo"
                                 onClick={() => setActiveMember(member)}

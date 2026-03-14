@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { memberApi } from "@/lib/services/member-api";
 import type { Member } from "@/lib/types";
 
-export function useMember(memberId: number | null) {
+export function useMember(memberId: string | null) {
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(Boolean(memberId));
   const [error, setError] = useState<string | null>(null);
