@@ -22,6 +22,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { MemberProfileModal } from "@/components/member-profile-modal";
 import type { Member } from "@/lib/types";
 
 interface OrganogramSectionProps {
@@ -94,17 +95,25 @@ function MemberPill({
   member,
   role,
   accent = "default",
+  onClick,
 }: {
   member: Member;
   role: string;
   accent?: "default" | "institutional";
+  onClick?: () => void;
 }) {
+  const isPresidencyRole = role.toLowerCase().includes("presidente");
+
   return (
-    <div
-      className={`rounded-2xl border p-4 backdrop-blur ${
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-2xl border backdrop-blur ${
         accent === "institutional"
           ? "border-amber-300/20 bg-[linear-gradient(180deg,rgba(251,191,36,0.12),rgba(255,255,255,0.04))]"
           : "border-white/10 bg-black/20"
+      } ${isPresidencyRole ? "p-5 md:p-6" : "p-4"} ${
+        onClick ? "text-left transition-transform hover:-translate-y-0.5" : "text-left"
       }`}
     >
       <div className="flex items-start justify-between gap-4">
@@ -130,7 +139,7 @@ function MemberPill({
           </span>
         ) : null}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -305,6 +314,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
   const [showGraph, setShowGraph] = useState(false);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [activeMember, setActiveMember] = useState<Member | null>(null);
 
   useEffect(() => {
     if (!api) {
@@ -361,8 +371,8 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
   }
 
   return (
-    <section className="space-y-8">
-      <div className="space-y-4">
+    <section className="w-full space-y-8">
+      <div className="w-full space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
             <Network className="h-3.5 w-3.5" />
@@ -386,14 +396,13 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
             )}
           </Button>
         </div>
-        <div className="space-y-3">
+        <div className="w-full space-y-3">
           <h1 className="w-full text-4xl font-semibold tracking-tight text-white md:text-5xl xl:text-6xl">
             Organograma em árvore com navegação por diretoria
           </h1>
-          <p className="w-full text-sm leading-6 text-muted-foreground md:text-base lg:max-w-4xl">
-            O núcleo institucional aparece no topo e as diretorias se conectam
-            abaixo. Cada card pode ser usado como atalho para abrir os detalhes da
-            área correspondente no slider.
+          <p className="w-full text-sm leading-6 text-muted-foreground md:text-base lg:max-w-4xl xl:max-w-full">
+            O núcleo institucional aparece no topo e as diretorias se conectam abaixo. 
+            Cada card pode ser usado como atalho para abrir os detalhes da área correspondente no slider.
           </p>
         </div>
       </div>
@@ -538,6 +547,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
                                       member={member}
                                       role={role}
                                       accent={node.type === "corp" ? "institutional" : "default"}
+                                      onClick={() => setActiveMember(member)}
                                     />
                                   ))}
                                 </div>
@@ -566,6 +576,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
                                 key={`${node.id}-${member.id}-effective`}
                                 member={member}
                                 role="Membro efetivo"
+                                onClick={() => setActiveMember(member)}
                               />
                             ))}
                           </div>
@@ -581,6 +592,16 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
         <CarouselPrevious className="left-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-left-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
         <CarouselNext className="right-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-right-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
       </Carousel>
+
+      <MemberProfileModal
+        member={activeMember}
+        open={Boolean(activeMember)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveMember(null);
+          }
+        }}
+      />
     </section>
   );
 }
