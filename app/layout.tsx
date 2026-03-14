@@ -25,8 +25,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className="dark">
-      {}
+    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+      <head>
+        <meta name="darkreader-lock" />
+      </head>
       <body className={`${museo.className} antialiased`}>
         {children}
         <Analytics />

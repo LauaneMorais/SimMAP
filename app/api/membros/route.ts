@@ -6,6 +6,9 @@ import {
   MemberServiceError,
 } from "@/lib/services/member-service";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 function handleError(error: unknown) {
   if (error instanceof MemberServiceError) {
     return NextResponse.json(
