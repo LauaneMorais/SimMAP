@@ -36,6 +36,14 @@ function normalizeStatus(status: string | null) {
   return status ?? "Sem status";
 }
 
+function normalizeForSearch(value: string | null | undefined) {
+  if (!value) return "";
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function statusClasses(status: string | null) {
   switch (status?.toLowerCase()) {
     case "em andamento":
@@ -283,13 +291,18 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
             project.status?.toLowerCase() === "nao iniciado";
 
           const interestedMembers = isNotStarted
-            ? members.filter((m) =>
-                m.projetosInteresse?.some(
-                  (p) =>
-                    p.toLowerCase() === project.nome.toLowerCase() ||
-                    (project.nomeOriginal && p.toLowerCase() === project.nomeOriginal.toLowerCase())
+            ? members
+                .filter((m) =>
+                  m.projetosInteresse?.some((p) => {
+                    const normalizedP = normalizeForSearch(p);
+                    return (
+                      normalizedP === normalizeForSearch(project.nome) ||
+                      (project.nomeOriginal && normalizedP === normalizeForSearch(project.nomeOriginal)) ||
+                      (project.slug && normalizedP === project.slug.replace(/-/g, ""))
+                    );
+                  })
                 )
-              )
+                .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
             : [];
 
           return (
