@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -18,10 +18,15 @@ import {
   Rocket,
   Star,
   Users,
+  Briefcase,
+  GraduationCap,
+  Calendar,
+  Code2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { DashboardAnalyses, Member, Project } from "@/lib/types";
 
@@ -105,6 +110,7 @@ export function ProjectsSection({
   analyses,
 }: ProjectsSectionProps) {
   const isMobile = useIsMobile();
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
   const membersBySlug = useMemo(
     () => new Map(members.map((member) => [member.slug, member])),
@@ -507,7 +513,8 @@ export function ProjectsSection({
                   {groupMembers.map((member) => (
                     <div
                       key={member.slug}
-                      className={`rounded-xl border p-4 transition-all ${colors.card}`}
+                      className={`cursor-pointer rounded-xl border p-4 transition-all hover:scale-[1.02] ${colors.card}`}
+                      onClick={() => setSelectedMember(member)}
                     >
                       <div className="mb-3 flex items-center justify-between gap-3">
                         <span className="text-lg font-bold text-foreground">
@@ -580,6 +587,213 @@ export function ProjectsSection({
           })}
         </CardContent>
       </Card>
+
+      <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
+        <DialogContent className="max-w-4xl border-primary/20 bg-background/95 backdrop-blur-md">
+          {selectedMember && (
+            <>
+              <DialogHeader>
+                <div className="flex items-start justify-between pr-8">
+                  <div>
+                    <DialogTitle className="text-2xl font-bold text-foreground">
+                      {selectedMember.nome}
+                    </DialogTitle>
+                    <DialogDescription className="mt-1 text-base text-muted-foreground">
+                      Perfil detalhado do membro
+                    </DialogDescription>
+                  </div>
+                  {!selectedMember.respondeuForms ? (
+                    <Badge variant="outline" className="border-amber-400/20 bg-amber-400/10 text-amber-200">
+                      Sem Forms
+                    </Badge>
+                  ) : null}
+                </div>
+              </DialogHeader>
+
+              <div className="grid gap-6 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant="outline" className={`px-3 py-1 text-sm ${getMaturidadeBadgeClass(selectedMember.maturidade)}`}>
+                    {getMaturidadeLabel(selectedMember.maturidade)}
+                  </Badge>
+                  <Badge variant="outline" className="border-white/10 bg-black/10 px-3 py-1 text-sm text-white/80">
+                    Nota Técnica: {formatTechnicalScore(selectedMember.notaTecnica)}
+                  </Badge>
+                  {selectedMember.status && (
+                    <Badge variant="secondary" className="px-3 py-1 text-sm border-border bg-secondary/50">
+                      {selectedMember.status}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <GraduationCap className="h-4 w-4" />
+                      Informações Acadêmicas
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Curso:</span>
+                        <span className="font-medium text-foreground text-right truncate">{selectedMember.curso || "Não informado"}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Período:</span>
+                        <span className="font-medium text-foreground text-right">{selectedMember.periodo ? `${selectedMember.periodo}º` : "Não informado"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      Histórico na Liga
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Entrada:</span>
+                        <span className="font-medium text-foreground text-right">{selectedMember.entrada || "Não informada"}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Tempo de Liga:</span>
+                        <span className="font-medium text-foreground text-right">{selectedMember.tempoLiga || "Não informado"}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                  <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <Clock3 className="h-4 w-4" />
+                    Disponibilidade
+                  </h4>
+                  <p className="font-medium text-foreground">
+                    {selectedMember.disponibilidade ?? "Não informada"}
+                  </p>
+                </div>
+
+                {(selectedMember.carreira.length > 0 || selectedMember.areasAtuacao.length > 0) && (
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Briefcase className="h-4 w-4" />
+                      Áreas e Carreira
+                    </h4>
+                    
+                    {selectedMember.carreira.length > 0 && (
+                      <div className="mb-3">
+                        <span className="mb-2 block text-xs text-muted-foreground">Carreira de interesse</span>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedMember.carreira.map((c) => (
+                            <Badge key={c} variant="outline" className="bg-primary/5 text-primary">
+                              {c}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedMember.areasAtuacao.length > 0 && (
+                      <div>
+                        <span className="mb-2 block text-xs text-muted-foreground">Áreas de atuação</span>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedMember.areasAtuacao.map((a) => (
+                            <Badge key={a} variant="secondary" className="bg-secondary/50 text-foreground">
+                              {a}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {selectedMember.techs && selectedMember.techs.length > 0 && (
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Code2 className="h-4 w-4" />
+                      Tecnologias e Ferramentas
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedMember.techs.map((t) => (
+                        <Badge key={t} variant="outline" className="border-cyan-500/30 bg-cyan-500/10 text-cyan-300">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <FolderKanban className="h-4 w-4" />
+                      Projetos Atuais ({selectedMember.projetosAtuais.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedMember.projetosAtuais.length > 0 ? (
+                        selectedMember.projetosAtuais.map((project) => (
+                          <Badge key={project} variant="secondary" className="border-border bg-secondary/50 text-foreground">
+                            {project}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge variant="outline" className="border-emerald-400/20 bg-emerald-400/10 text-emerald-200">
+                          Sem projeto atual
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Rocket className="h-4 w-4" />
+                      Projetos de Interesse ({selectedMember.projetosInteresse.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedMember.projetosInteresse.length > 0 ? (
+                        selectedMember.projetosInteresse.map((project) => (
+                          <Badge key={project} variant="outline" className="border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                            {project}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">Nenhum interesse mapeado</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {selectedMember.projetosFinalizados && selectedMember.projetosFinalizados.length > 0 && (
+                    <div className="space-y-3 rounded-xl border border-border/50 bg-secondary/20 p-4 sm:col-span-2">
+                      <h4 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <Folder className="h-4 w-4" />
+                        Projetos Finalizados ({selectedMember.projetosFinalizados.length})
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedMember.projetosFinalizados.map((project) => (
+                          <Badge key={project} variant="outline" className="border-gray-500/30 bg-gray-500/10 text-gray-300">
+                            {project}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {selectedMember.sugestaoRetomada && selectedMember.sugestaoRetomada.length > 0 && (
+                  <div className="space-y-3 rounded-xl border border-yellow-500/30 bg-yellow-500/5 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-yellow-500/80">
+                      <AlertCircle className="h-4 w-4" />
+                      Sugestões de Retomada
+                    </h4>
+                    <p className="text-sm text-foreground/80">
+                      {selectedMember.sugestaoRetomada.join(" ")}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
