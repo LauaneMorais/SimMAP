@@ -5,12 +5,10 @@ import { useDeferredValue, useMemo, useState } from "react";
 import {
   ArrowUpRight,
   CalendarDays,
+  ChevronDown,
   FolderOpen,
-  Layers3,
   Search,
   ShieldAlert,
-  Sparkles,
-  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import type { Member, Project } from "@/lib/types";
 
 interface ProjectsGalleryProps {
@@ -181,17 +180,17 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.24em] text-white/45">Projetos</p>
+                <p className="text-xs uppercase tracking-wider text-white/45">Projetos</p>
                 <p className="mt-2 text-3xl font-semibold text-white">{summary.total}</p>
               </div>
               <div className="rounded-2xl border border-emerald-300/15 bg-emerald-500/10 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.24em] text-emerald-100/60">
+                <p className="text-xs uppercase tracking-wider text-emerald-100/60">
                   Em andamento
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-emerald-50">{summary.active}</p>
               </div>
               <div className="rounded-2xl border border-cyan-300/15 bg-cyan-500/10 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.24em] text-cyan-100/60">
+                <p className="text-xs uppercase tracking-wider text-cyan-100/60">
                   Pessoas alocadas
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-cyan-50">
@@ -279,6 +278,20 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
             !project.dataInicio &&
             !project.dataEncerramento;
 
+          const isNotStarted =
+            project.status?.toLowerCase() === "não iniciado" ||
+            project.status?.toLowerCase() === "nao iniciado";
+
+          const interestedMembers = isNotStarted
+            ? members.filter((m) =>
+                m.projetosInteresse?.some(
+                  (p) =>
+                    p.toLowerCase() === project.nome.toLowerCase() ||
+                    (project.nomeOriginal && p.toLowerCase() === project.nomeOriginal.toLowerCase())
+                )
+              )
+            : [];
+
           return (
             <Card
               key={project.slug}
@@ -315,24 +328,24 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
 
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="rounded-2xl border border-border/50 bg-background/30 p-3">
-                    <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground text-ellipsis overflow-hidden">
                       Responsável
                     </p>
-                    <p className="mt-2 text-sm font-medium text-foreground">
+                    <p className="mt-2 text-sm font-medium text-foreground line-clamp-2">
                       {responsavel ?? "Não informado"}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-border/50 bg-background/30 p-3">
-                    <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground text-ellipsis overflow-hidden">
                       Integrantes
                     </p>
                     <p className="mt-2 text-sm font-medium text-foreground">{project.teamSize}</p>
                   </div>
                   <div className="rounded-2xl border border-border/50 bg-background/30 p-3">
-                    <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground text-ellipsis overflow-hidden">
                       Fase
                     </p>
-                    <p className="mt-2 text-sm font-medium text-foreground">
+                    <p className="mt-2 text-sm font-medium text-foreground line-clamp-2">
                       {project.isActive ? "Operação" : "Planejamento / histórico"}
                     </p>
                   </div>
@@ -364,7 +377,7 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground">
                         Equipe
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -413,6 +426,50 @@ export function ProjectsGallery({ projects, members }: ProjectsGalleryProps) {
                     </div>
                   )}
                 </div>
+
+                {isNotStarted && (
+                  <Collapsible className="space-y-3 pt-3 border-t border-border/40">
+                    <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-xl border border-border/40 bg-secondary/20 p-3 hover:bg-secondary/30 transition-colors">
+                      <div className="flex items-center gap-3 text-left">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            Membros que desejam participar
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Interesse Registrado
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary" className="bg-fuchsia-400/10 text-fuchsia-400">
+                          {interestedMembers.length}
+                        </Badge>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                      </div>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent>
+                      {interestedMembers.length > 0 ? (
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {interestedMembers.map((m) => (
+                            <Link
+                              key={`interest-${project.slug}-${m.slug}`}
+                              href={`/membros/${m.slug}`}
+                              className="inline-flex items-center gap-2 rounded-full border border-fuchsia-400/20 bg-fuchsia-400/10 px-3 py-1.5 text-sm text-fuchsia-300 transition-colors hover:bg-fuchsia-400/15"
+                            >
+                              {m.nome}
+                              <ArrowUpRight className="h-3.5 w-3.5" />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="mt-2 rounded-2xl border border-dashed border-border/60 bg-background/20 px-4 py-5 text-sm text-muted-foreground">
+                          Nenhum registro de interesse até o momento.
+                        </div>
+                      )}
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
               </CardContent>
             </Card>
           );
