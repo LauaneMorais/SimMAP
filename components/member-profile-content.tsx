@@ -104,13 +104,13 @@ export function MemberProfileContent({
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5">
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="border-white/10 bg-white/10 text-white">
+                    <Badge className=" text-sm border-white/10 bg-white/10 text-white">
                       {member.status ?? "Membro"}
                     </Badge>
                     {member.areasAtuacao.map((area) => (
                       <Badge
                         key={area}
-                        className="border-primary/30 bg-primary/12 text-primary"
+                        className=" text-sm border-primary/30 bg-primary/12 text-primary"
                       >
                         {area}
                       </Badge>
