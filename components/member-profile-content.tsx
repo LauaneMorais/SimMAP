@@ -87,14 +87,14 @@ export function MemberProfileContent({
   return (
     <div className="space-y-6">
       <div
-        className={`grid gap-6 ${
-          isModal ? "grid-cols-1" : "xl:grid-cols-[0.8fr_1.2fr]"
+        className={`grid gap-6 items-start ${
+          isModal ? "grid-cols-1" : "xl:grid-cols-[480px_1fr]"
         }`}
       >
         {!isModal ? (
-          <Card className="overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.16))]">
-            <CardContent className="p-0">
-              <div className="relative aspect-[4/5] w-full overflow-hidden">
+          <Card className="flex h-full max-w-lg flex-col items-center justify-center border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.16))] p-6 md:p-8">
+            <CardContent className="w-full p-0 flex justify-center">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
                 <Image
                   src={imageSrc}
                   alt={member.nome}
@@ -102,7 +102,7 @@ export function MemberProfileContent({
                   className="object-cover"
                   sizes="(max-width: 1280px) 100vw, 30vw"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5">
                   <div className="flex flex-wrap gap-2">
                     <Badge className="border-white/10 bg-white/10 text-white">
                       {member.status ?? "Membro"}
