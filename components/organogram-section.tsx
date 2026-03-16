@@ -537,7 +537,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
                           <div className="space-y-3">
                             {node.groups.length > 0 ? (
                               node.groups.map((group) => (
-                                <div key={`${node.id}-${group.title}`} className="space-y-3">
+                                <div key={`${node.id}-${group.title}`} className="space-y-3 space-x-4">
                                   <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
                                     {group.title}
                                   </div>
