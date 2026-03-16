@@ -135,7 +135,9 @@ function MemberPill({
         ) : null}
         {member.maturidade ? (
           <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/65">
-            {member.maturidade.split(" ")[0]}
+            {member.maturidade.toLowerCase().includes("em desenvolvimento")
+              ? member.maturidade.split(" ").slice(0, 2).join(" ")
+              : member.maturidade.split(" ")[0]}
           </span>
         ) : null}
       </div>
@@ -397,7 +399,7 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
           </Button>
         </div>
         <div className="w-full space-y-3">
-          <h1 className="w-full text-4xl font-semibold tracking-tight text-white md:text-5xl xl:text-5xl">
+          <h1 className="w-full text-4xl font-semibold tracking-tight text-white md:text-5xl xl:text-xl">
             Organograma em árvore com navegação por diretoria
           </h1>
           <p className="w-full text-sm leading-6 text-muted-foreground md:text-base lg:max-w-4xl xl:max-w-full">
