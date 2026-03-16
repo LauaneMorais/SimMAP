@@ -589,8 +589,8 @@ export function OrganogramSection({ members }: OrganogramSectionProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-left-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
-        <CarouselNext className="right-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-right-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
+        <CarouselPrevious className="cursor-pointer left-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-left-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
+        <CarouselNext className="cursor-pointer right-3 top-auto bottom-3 translate-y-0 border-white/10 bg-black/45 text-white hover:bg-black/60 md:-right-12 md:top-1/2 md:bottom-auto md:-translate-y-1/2" />
       </Carousel>
 
       <MemberProfileModal
